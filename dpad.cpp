@@ -14,26 +14,15 @@
 
 #include <Arduino.h>
 
-#ifndef KEYPAD_PIN
-#define KEYPAD_PIN  A0
-#endif
-
-// this is for analog 5x momentary buttons dpad
-// as seen here http://fritzing.org/projects/arduino-5-buttons-keypad
-// put your resistor calibration values here
-const int dpad[5][2] = {
-  {460, 480}, //KEY_MIDDLE 0
-  {122, 234}, //KEY_LEFT 1
-  {700, 750}, //KEY_RIGHT 2
-  {-1,   70}, //KEY_DOWN 3
-  {260, 350}  //KEY_ROTATE 4
-};
+#define LEFT    12
+#define RIGHT   13
+#define DOWN    0
+#define ROTATE  14
 
 static int dpadwarp[5] = { 0,0,0,0,0 };
 static volatile int Debounce = 0;
 static volatile bool processKey = true;
 static volatile int currentPos;
-
 
 class Dpad
 {
@@ -42,18 +31,14 @@ class Dpad
   
   public:
 
-    static int getPos() {
-      
-      currentPos = getPosition(KEYPAD_PIN)*1;
-      delay(100);
-      
-      for(int i=0;i<5;i++) {
-        if(currentPos > dpad[i][0] && currentPos < dpad[i][1]) {
-          return i;  
-        }
-      }
-      return -1;
-    }
+  static int getPos() {
+    delay(150);
+    if(digitalRead(LEFT) == LOW) return 1;
+    if(digitalRead(RIGHT) == LOW) return 2;
+    if(digitalRead(DOWN) == LOW) return 3;
+    if(digitalRead(ROTATE) == LOW) return 4;
+    return 0;       
+  }
 
     static boolean DoDebounce() {
       Debounce++;

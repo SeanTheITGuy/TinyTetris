@@ -16,7 +16,7 @@
 #include <Arduino.h>
 
 #ifndef PIEZO_PIN
-#define PIEZO_PIN  (3)
+#define PIEZO_PIN (3)
 #endif
 
 // A rest

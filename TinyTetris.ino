@@ -40,6 +40,7 @@ Create defines for all the magic numbers but they are useful for now.
 #define OLED_SET_COLUMN                 0x21
 #define OLED_SET_PAGE	                0x22
 
+
 // the tetris blocks
 const byte Blocks[7][2] PROGMEM = {
   { 0B01000100, 0B01000100 },
@@ -185,6 +186,11 @@ const byte brickLogo[36][8] PROGMEM= {
 #define LED_PIN     13
 #define KEYPAD_PIN  A0
 
+#define LEFT_PIN    12
+#define RIGHT_PIN  13
+#define DOWN_PIN    0
+#define ROTATE_PIN  14
+
 //struct for pieces
 
 struct PieceSpace {
@@ -240,12 +246,21 @@ void setup() {
   Serial.begin(9600);
   while (!Serial);
 
-  Wire.begin();
+  Wire.begin(D1,D2);
   Wire.setClock(400000);
 
   pinMode(PIEZO_PIN, OUTPUT);
   pinMode(LED_PIN, OUTPUT);
+  pinMode(LEFT_PIN, INPUT_PULLUP);
+  pinMode(RIGHT_PIN, INPUT_PULLUP);
+  pinMode(DOWN_PIN, INPUT_PULLUP);
+  pinMode(ROTATE_PIN, INPUT_PULLUP);
 
+  OLEDCommand(0xC8); //Mirror vertically
+  delay(20);
+  OLEDCommand(0xA1); // Mirror horizontally
+  delay(20);
+    
   OLEDCommand(OLED_DISPLAY_OFF);
   delay(20);
   OLEDCommand(OLED_DISPLAY_ON);
@@ -923,7 +938,7 @@ bool processKeys() {
   int down = 110 - acceleration;
 
   int dpadpos = Dpad::getPos();
-
+  
   //Serial.println(dpadpos);
 
   switch(dpadpos) {
@@ -1302,4 +1317,3 @@ void loop() {
     }
   }
 }
-
